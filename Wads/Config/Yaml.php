@@ -25,7 +25,7 @@ class Wads_Config_Yaml extends Zend_Config
      * String that symbol extended section
      */
     protected $_extendsSection = ';extends';
- 
+
     /**
      * constructor
      *
@@ -41,9 +41,9 @@ class Wads_Config_Yaml extends Zend_Config
             require_once 'Zend/Config/Exception.php';
             throw new Zend_Config_Exception('Filename is not set');
         }
- 
+
         $yamlArray = $this->_parse_yaml_file($filename);
- 
+
         $preProcessedArray = array();
         foreach ($yamlArray as $key => $data)
         {
@@ -54,7 +54,7 @@ class Wads_Config_Yaml extends Zend_Config
                 case 1:
                     $preProcessedArray[$thisSection] = $data;
                     break;
- 
+
                 case 2:
                     $extendedSection = trim($bits[1]);
                     if(!is_array($data)) {
@@ -62,14 +62,14 @@ class Wads_Config_Yaml extends Zend_Config
                     }
                     $preProcessedArray[$thisSection] = array_merge(array($this->_extendsSection=>$extendedSection), $data);
                     break;
- 
+
                 default:
                     /** @see Zend_Config_Exception */
                     require_once 'Zend/Config/Exception.php';
                     throw new Zend_Config_Exception("Section '$thisSection' may not extend multiple sections in $filename");
             }
         }
- 
+
         if (null === $section) {
             $dataArray = array();
             foreach ($preProcessedArray as $sectionName => $sectionData) {
@@ -85,7 +85,7 @@ class Wads_Config_Yaml extends Zend_Config
                     throw new Zend_Config_Exception("Section '$sectionName' cannot be found in $filename");
                 }
                 $dataArray = array_merge($this->_processExtends($preProcessedArray, $sectionName), $dataArray);
- 
+
             }
             parent::__construct($dataArray, $allowModifications);
         } else {
@@ -96,10 +96,10 @@ class Wads_Config_Yaml extends Zend_Config
             }
             parent::__construct($this->_processExtends($preProcessedArray, $section), $allowModifications);
         }
- 
+
         $this->_loadedSection = $section;
     }
- 
+
     /**
      * Loads a YAML file and parse data to PHP array
      *
@@ -116,12 +116,12 @@ class Wads_Config_Yaml extends Zend_Config
             $yamlArray = Spyc::YAMLLoad($filename);
             return $yamlArray;
         }
- 
+
         require_once 'Zend/Config/Exception.php';
         throw new Zend_Config_Exception('YAML loader function not found');
     }
- 
- 
+
+
     /**
      * Helper function to process each element in the section and handle
      * the "extends" inheritance keyword.
@@ -135,11 +135,11 @@ class Wads_Config_Yaml extends Zend_Config
     protected function _processExtends($yamlArray, $section, $config = array())
     {
         $thisSection = $yamlArray[$section];
- 
+
         if(!is_array($thisSection)) {
             return $thisSection;
         }
- 
+
         foreach ($thisSection as $key => $value) {
             if (strtolower($key) == $this->_extendsSection) {
                 if (isset($yamlArray[$value])) {
